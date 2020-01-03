@@ -1,0 +1,167 @@
+-- ignorira razmak (mice ga kod preproc)
+
+
+Variables (circular list, svake page ima svoju? a front i back se kopiraju?)
+(preprocessed, assigns each var a num and delets var set declar before comp)
+
+	SET FRONT	SEF
+			[VGGGZ	
+			 VHHHZ		(H^V) * Z - G
+			 VHHHZ]	
+
+	SET BACK	SEB
+			[x---p	
+			 x---p
+			 x---p]	
+
+	NEXT FRONT	NEF			
+	PREV FRONT	PEF			
+
+
+	NEXT BACK	NEB		
+	PREV BACK	PEB
+
+	SWAP		SWP
+
+	
+
+CONTROL
+(ili start scopa ili jedna naredba)
+
+	IF F=ZERO	CFZ
+	IF B=ZERO	CBZ
+
+	IF F<B		CLS
+	IF F>B		CMR
+
+	IF F=B		CIE
+
+
+Input/Output
+loads / prints from current 
+(swap za out back)
+
+	IN  FRONT ASCII	>AF
+	OUT FRONT ASCII	<AF
+
+	IN  FRONT  INT		IIF
+	OUT FRONT  INT		OIF
+
+	IN  BACK ASCII	        >AF
+	OUT BACK ASCII	        <AF
+
+	IN  BACK  INT		>IF
+	OUT BACK  INT		<IF
+
+COMBINATION
+	
+
+	ADD	
+		FROM FRONT TO BACK 	FAB
+		FROM BACK  TO FRONT 	BAF
+		ADD ONE    TO BACK	AOB
+		ADD ONE    TO FRONT	AOF		
+
+	SUB
+		FROM FRONT TO BACK 	FSB
+		FROM BACK  TO FRONT 	BSF
+		SUB ONE    TO BACK	SOB
+		SUB ONE    TO FRONT	SOF
+
+	MUL		
+		
+		Save back
+		FROM FRONT TO BACK 	MBF
+		FROM BACK  TO FRONT 	MBB
+		
+		Save front
+		FROM FRONT TO BACK 	MFF
+		FROM BACK  TO FRONT 	MFB
+
+	DIV	(no rounding, no remainder) ???		
+		FROM FRONT TO BACK 	FDB
+		FROM BACK  TO FRONT 	BDF
+
+
+
+SCOPE
+	
+	START(scope)			STR
+	STOP (scope)			STP
+
+
+READ DIRECTION
+
+	UP				RUP
+	DOWN				RDW
+	LEFT				RLF
+	RIGHT				RRT
+
+  	PAGE UP			PUP
+	PAGE DOWN			PDW		
+
+
+P1###
+SEF NEF SEF NEF SEF NEF SEF
+[x   x  [x   x  [xx xx  [
+ xxxxx   xxxxx   xxxxx  
+ x   x]  x   x]  x    ] 
+FFF FFF FF
+%%%%
+
+
+
+PRIMITIVES (built-in things)
+
+    PRIMITIVE DATA (like numbers)
+    PRIMITIVE PROCEDURES (like addition)
+
+MEANS OF COMBINATION
+
+    EXPRESSIONS (putting together values)
+    COMPOSITION (putting together objects or procedures)
+    CONTAINMENT (putting objects inside of other objects) 
+
+MEANS OF ABSTRACTION
+
+    NAMING
+    PROCEDURAL ABSTRACTION
+    DATA ABSTRACTION
+
+
+
+
+
+THE COMPO­NENTS OF A LANGUAGE
+
+
+	Every language made with Racket has two essen­tial compo­nents:
+    
+
+    	A READER, which converts the source code of our language from a string of char­ac­ters into Racket-	
+	style paren­the­sized forms, also known as S-expres­sions.
+    
+
+    	An EXPANDER, which deter­mines how these paren­the­sized forms corre­spond to real Racket expres­sions 
+	(which are then eval­u­ated to produce a result).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
