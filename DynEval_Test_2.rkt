@@ -1,15 +1,14 @@
 #lang racket
-;#lang br/quicklang
 
-(define (read-syntax path port)
-  (define be-syn '())
-  (define src-lines (port->lines port))
-  (datum->syntax #f (append '(module lucy racket) coms prog-mem-def cmdd '((dyn-eval-xyz comm-lst-ddd-test)))))
- 
+;IIA program pita za input
+;OIA ispiše
+;RDW supusti se na red ispod
+;RLF krene lijevo
+;PUP popne se na sljedecu "stranicu"
+;RRT krene desno
+;OIA ispiše
 
-(provide read-syntax)
- 
-(define coms '((define comm-lst-ddd-test
+(define comm-lst-ddd-test
   '(   ;glavno polje
     (  ;z0
      ((IIA) (OIA) (RDW) (STP))        ;y0
@@ -18,14 +17,13 @@
      ((NOP) (NOP) (NOP) (STP))        ;y0
      ((NOP) (RRT) (OIA) (STP))) ;y1
     )) ;x0   ;x1   ;x2   ;x3
-  ))
      
 
 
 ;memorija
-(define prog-mem-def '((define prog-mem-lst '(0 0 0 0 0 0)) 
+(define prog-mem-lst '(0 0 0 0 0 0)) 
 (define prog-mem-A-ptr 2)
-(define prog-mem-B-ptr 2))) 
+(define prog-mem-B-ptr 2) 
 
 
 (define cmdd '((define (dyn-eval-xyz comm-lst-ddd)
@@ -171,7 +169,26 @@
         (else #f) 
         )))
   
-  (dyn-eval-iter 0 0 0 comm-lst-ddd 4))))
+  (dyn-eval-iter 0 0 0 comm-lst-ddd 4))
 
 ;(dyn-eval-xyz comm-lst-ddd-test)
-  
+  ))
+
+
+
+(define ns (make-base-namespace))
+
+
+;(eval cmdd ns)
+
+
+
+;testiranje
+;(dyn-eval-xyz comm-lst-ddd-test)
+
+
+
+
+
+
+        

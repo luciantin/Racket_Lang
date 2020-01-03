@@ -1,7 +1,2 @@
-#lang reader "fmlangV2.rkt"
-
-toinž bdykb
-higžizu
-tzž
-ććććčččććšđšđ
-kkkčćčććčćč
+#lang reader "RangReader.rkt"
+ds
