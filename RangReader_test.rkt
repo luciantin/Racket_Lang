@@ -1,6 +1,10 @@
 #lang racket
 ;#lang br/quicklang
 
+(define comm-set-ddd '())
+
+(define com-ss-dd '())
+
 (define (read-syntax path port)
   ;(define
   (define port-str (port->string port))
@@ -9,7 +13,6 @@
   (define (get-char-from-port) (read-char ni-st))
   
   
-
   (define start-y 0)
 
   (define (update-start-y x)
@@ -69,14 +72,17 @@
       ([eq? (car crnt-pg) #\+] (append pgs-lst (list (cdr crnt-pg))))
       (else 555))));nebi trebalo
   
-  (datum->syntax #f (append '(module lucy racket (display 1)))))
+  ;(datum->syntax #f (append '(module lucy racket (display 1)))))
 
-
-; (datum->syntax #f (append '(module idfk racket)
- ;                           prog-mem-def
-  ;                          cmdd
-   ;                         '((dyn-eval-xyz (car (list (form-list-of-pages '() 0)))))
-    ;                        )))
+  (set! comm-set-ddd (form-list-of-pages '() 0))
+  (set! com-ss-dd (append '(define comm-lst-ddd-test)  (list comm-set-ddd)))
+  (display com-ss-dd)
+  (datum->syntax #f (append '(module idfk racket)
+                           prog-mem-def
+                           cmdd
+                           coms
+                           '((dyn-eval-xyz comm-lst-ddd-test))
+                           )))
 
 ;(datum->syntax #f (append '(module lucy racket) coms prog-mem-def cmdd '((dyn-eval-xyz comm-lst-ddd-test)))))
  

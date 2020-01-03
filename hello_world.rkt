@@ -1,4 +1,8 @@
 #lang reader "RangReader_test.rkt"
-sd
-sd
-sd
+STR
+IIA OIA RDW STP
+NOP PUP RLF STP
+NEW
+NOP NOP NOP STP
+NOP RRT OIA STP
+END
