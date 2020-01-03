@@ -2,8 +2,13 @@
 ;#lang br/quicklang
 
 (define (read-syntax path port)
+  ;(define
+  (define port-str (port->string port))
   
-  (define (get-char-from-port) (read-char port))
+  (define ni-st (open-input-string port-str))
+  (define (get-char-from-port) (read-char ni-st))
+  
+  
 
   (define start-y 0)
 
@@ -64,7 +69,7 @@
       ([eq? (car crnt-pg) #\+] (append pgs-lst (list (cdr crnt-pg))))
       (else 555))));nebi trebalo
   
-  (datum->syntax #f (append '(module idfk racket (display 1)))))
+  (datum->syntax #f (append '(module lucy racket (display 1)))))
 
 
 ; (datum->syntax #f (append '(module idfk racket)
