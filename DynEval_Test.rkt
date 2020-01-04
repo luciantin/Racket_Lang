@@ -1,4 +1,31 @@
 #lang racket
+(require syntax/datum)
+
+(define com-res '(ADV ADC FDS))
+
+(append '((quote wd)) '(123 2))
+
+;wo
+(with-datum ([(a ...) (list com-res)])
+    (datum (define xxx 'a ...)))
+
+(eq?
+'(
+ 
+( ((IIA) (OIA) (RDW))
+  ((NOP) (PUP) (RLF)))
+
+( ((NOP) (NOP) (NOP))
+  ((NOP) (RRT) (OIA))))
+
+'(   ;glavno polje
+    (  ;z0
+     ((IIA) (OIA) (RDW) (STP))        ;y0
+     ((NOP) (PUP) (RLF) (STP))) ;y1
+    (  ;z1
+     ((NOP) (NOP) (NOP) (STP))        ;y0
+     ((NOP) (RRT) (OIA) (STP))) ;y1
+    ))
 
 ;IIA program pita za input
 ;OIA ispiše
@@ -177,7 +204,7 @@
 
 
 ;testiranje
-(dyn-eval-xyz comm-lst-ddd-test)
+;(dyn-eval-xyz comm-lst-ddd-test)
 
 
 

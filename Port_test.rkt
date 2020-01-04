@@ -55,7 +55,7 @@ END
   (let ((crnt-comm-lst (get-list-of-commands '())))
     (cond
       ([eq? (car crnt-comm-lst) #\S]
-       (form-page-from-lists (append comm-lst (list (cdr crnt-comm-lst)))))
+       (form-page-from-lists (append comm-lst (list (cdr crnt-comm-lst) '(STP)))))
       ([eq? (car crnt-comm-lst) #\#] (cons #\# comm-lst))
       ([eq? (car crnt-comm-lst) #\-] (cons #\- comm-lst))
       ([eq? (car crnt-comm-lst) #\+] (cons #\+ comm-lst))
