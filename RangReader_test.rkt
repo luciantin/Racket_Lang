@@ -89,14 +89,14 @@
                            coms
                            
                            (list com-s-d)
-                           '((displayln xxx))
-                           '((displayln " "))
-                           '((displayln comm-lst-ddd-test))
-                           '((equal? xxx comm-lst-ddd-test))
-                           '((displayln " "))
-                           '((car (car (car xxx))))
-                           '((car (car (car comm-lst-ddd-test))))
-                           '((displayln " "))
+                           ;'((displayln xxx))
+                           ;'((displayln " "))
+                           ;'((displayln comm-lst-ddd-test))
+                           ;'((equal? xxx comm-lst-ddd-test))
+                           ;'((displayln " "))
+                           ;'((car (car (car xxx))))
+                           ;'((car (car (car comm-lst-ddd-test))))
+                           ;'((displayln " "))
                            '((dyn-eval-xyz xxx))
                            )))
 
