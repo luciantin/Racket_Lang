@@ -176,7 +176,7 @@
 
 
 
-;(define ns (make-base-namespace))
+(define ns (make-base-namespace))
 
 
 ;(eval cmdd ns)

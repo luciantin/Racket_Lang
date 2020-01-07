@@ -1,13 +1,13 @@
 #lang racket
 (require syntax/datum)
 
-(define com-res '(ADV ADC FDS))
+;(define com-res '(ADV ADC FDS))
 
-(append '((quote wd)) '(123 2))
+;(append '((quote wd)) '(123 2))
 
 ;wo
-(with-datum ([(a ...) (list com-res)])
-    (datum (define xxx 'a ...)))
+;(with-datum ([(a ...) (list com-res)])
+;    (datum (define xxx 'a ...)))
 
 (eq?
 '(
@@ -135,63 +135,63 @@
     (let ((elem (get-comm-lst-elem x y z))) ;uzmi naredbu iz polja
       (cond
         ;DIRECTION
-        ([eq? (car elem) 'STP] #t) ;stop
-        ([eq? (car elem) 'RUP] ;row up    #1
+        ([string=? (car elem) "STP"] #t) ;stop
+        ([string=? (car elem) "RUP"] ;row up    #1
          (call-dyn-eval-iter-new-dir x y z comms 1 1))
-        ([eq? (car elem) 'RDW] ;row down  #2
+        ([string=? (car elem) "RDW"] ;row down  #2
          (call-dyn-eval-iter-new-dir x y z comms 2 1))
-        ([eq? (car elem) 'RLF] ;row left  #3
+        ([string=? (car elem) "RLF"] ;row left  #3
          (call-dyn-eval-iter-new-dir x y z comms 3 1))
-        ([eq? (car elem) 'RRT] ;row right #4
+        ([string=? (car elem) "RRT"] ;row right #4
          (call-dyn-eval-iter-new-dir x y z comms 4 1))
-        ([eq? (car elem) 'PUP] ;page up   #5
+        ([string=? (car elem) "PUP"] ;page up   #5
          (call-dyn-eval-iter-new-dir x y z comms 5 1))
-        ([eq? (car elem) 'PDW] ;page down #6
+        ([string=? (car elem) "PDW"] ;page down #6
          (call-dyn-eval-iter-new-dir x y z comms 6 1))
         ;PROG-MEM
-        ([eq? (car elem) 'NEA] ;next elem A
+        ([string=? (car elem) "NEA"] ;next elem A
          (travel-and-call x y z comms dir add-one-prog-mem-A-ptr))
-        ([eq? (car elem) 'PEA] ;prev elem A
+        ([string=? (car elem) "PEA"] ;prev elem A
          (travel-and-call x y z comms dir sub-one-prog-mem-A-ptr))
-        ([eq? (car elem) 'NEB] ;next elem B
+        ([string=? (car elem) "NEB"] ;next elem B
          (travel-and-call x y z comms dir add-one-prog-mem-B-ptr))
-        ([eq? (car elem) 'PEB] ;prev elem B
+        ([string=? (car elem) "PEB"] ;prev elem B
          (travel-and-call x y z comms dir sub-one-prog-mem-B-ptr))
-        ([eq? (car elem) 'SWP] ;swap A <-> B   
+        ([string=? (car elem) "SWP"] ;swap A <-> B   
          (travel-and-call x y z comms dir swap-prog-mem-ptr-A-B))
         ;CONTROL if #f skip next command
-        ([eq? (car elem) 'CAZ] ;check if A zero
+        ([string=? (car elem) "CAZ"] ;check if A zero
          (if (eq? get-prog-mem-val-at-A 0)
              (call-dyn-eval-iter-new-dir x y z comms dir 1)
              (call-dyn-eval-iter-new-dir x y z comms dir 2)))
-        ([eq? (car elem) 'CBZ] ;check if B zero
+        ([string=? (car elem) "CBZ"] ;check if B zero
          (if (eq? get-prog-mem-val-at-B 0)
              (call-dyn-eval-iter-new-dir x y z comms dir 1)
              (call-dyn-eval-iter-new-dir x y z comms dir 2)))
-        ([eq? (car elem) 'CAL] ;check if A > B
+        ([string=? (car elem) "CAL"] ;check if A > B
          (if (> get-prog-mem-val-at-A get-prog-mem-val-at-B)
              (call-dyn-eval-iter-new-dir x y z comms dir 1)
              (call-dyn-eval-iter-new-dir x y z comms dir 2)))
-        ([eq? (car elem) 'CBL] ;check if B > A
+        ([string=? (car elem) "CBL"] ;check if B > A
          (if (> get-prog-mem-val-at-B get-prog-mem-val-at-A)
              (call-dyn-eval-iter-new-dir x y z comms dir 1)
              (call-dyn-eval-iter-new-dir x y z comms dir 2)))
-        ([eq? (car elem) 'CIE] ;check if A == B
+        ([string=? (car elem) "CIE"] ;check if A == B
          (if (eq? get-prog-mem-val-at-A get-prog-mem-val-at-B)
              (call-dyn-eval-iter-new-dir x y z comms dir 1)
              (call-dyn-eval-iter-new-dir x y z comms dir 2)))
         ;I/O
-        ([eq? (car elem) 'OIA]
+        ([string=? (car elem) "OIA"]
          (travel-and-call x y z comms dir  display-val-int-at-A))
-        ([eq? (car elem) 'OIB]
+        ([string=? (car elem) "OIB"]
          (travel-and-call x y z comms dir  display-val-int-at-B))
-        ([eq? (car elem) 'IIA]
+        ([string=? (car elem) "IIA"]
          (travel-and-call x y z comms dir  input-val-int-at-A))
-        ([eq? (car elem) 'IIB]
+        ([string=? (car elem) "IIB"]
          (travel-and-call x y z comms dir  input-val-int-at-B))
         ;MATH
         ;OTHER
-        ([eq? (car elem) 'NOP] (display 501)); noop debug 501, treba nastaviti dalje
+        ([string=? (car elem) "NOP"] (display 501)); noop debug 501, treba nastaviti dalje
         ;ERROR HANDLER :)
         (else #f) 
         )))

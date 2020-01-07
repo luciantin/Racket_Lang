@@ -1,8 +1,14 @@
--- ignorira razmak (mice ga kod preproc)
+STARO!!! wiki na gitu je bolji
 
 
-Variables (circular list, svake page ima svoju? a front i back se kopiraju?)
-(preprocessed, assigns each var a num and delets var set declar before comp)
+
+
+
+-- ignorira razmak (mice ga kod preproc) 
+
+
+Variables (circular list, svake page ima svoju? a front i back se kopiraju?) ne
+(preprocessed, assigns each var a num and delets var set declar before comp) ne
 
 	SET FRONT	SEF
 			[VGGGZ	
@@ -84,7 +90,7 @@ COMBINATION
 
 
 
-SCOPE
+SCOPE ne
 	
 	START(scope)			STR
 	STOP (scope)			STP
