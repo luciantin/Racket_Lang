@@ -1,6 +1,6 @@
 #lang reader "RangReader_test.rkt"
 STR
-IIA OIA RDW STP
+OIA NEA IIA CAZ IIA OIA OIB STP
 NOP PUP RLF STP
 NEW
 NOP NOP NOP STP

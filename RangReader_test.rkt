@@ -146,9 +146,9 @@
     (set! prog-mem-lst (list-set prog-mem-lst prog-mem-B-ptr x)))
   
   (define (change-prog-mem-A-ptr val proc)
-    (set! prog-mem-A-ptr (proc prog-mem-A-ptr proc)))
+    (set! prog-mem-A-ptr (proc prog-mem-A-ptr val)))
   (define (change-prog-mem-B-ptr val proc)
-    (set! prog-mem-B-ptr (proc prog-mem-B-ptr proc)))
+    (set! prog-mem-B-ptr (proc prog-mem-B-ptr val)))
 
   (define (incr-prog-mem-A-ptr x) (change-prog-mem-A-ptr x +))
   (define (decr-prog-mem-A-ptr x) (change-prog-mem-A-ptr x -))
@@ -235,23 +235,23 @@
          (travel-and-call x y z comms dir swap-prog-mem-ptr-A-B))
         ;CONTROL if #f skip next command
         ([string=? (car elem) "CAZ"] ;check if A zero
-         (if (eq? get-prog-mem-val-at-A 0)
+         (if (equal? (get-prog-mem-val-at-A) 0)
              (call-dyn-eval-iter-new-dir x y z comms dir 1)
              (call-dyn-eval-iter-new-dir x y z comms dir 2)))
         ([string=? (car elem) "CBZ"] ;check if B zero
-         (if (eq? get-prog-mem-val-at-B 0)
+         (if (eq? (get-prog-mem-val-at-B) 0)
              (call-dyn-eval-iter-new-dir x y z comms dir 1)
              (call-dyn-eval-iter-new-dir x y z comms dir 2)))
         ([string=? (car elem) "CAL"] ;check if A > B
-         (if (> get-prog-mem-val-at-A get-prog-mem-val-at-B)
+         (if (> (get-prog-mem-val-at-A) (get-prog-mem-val-at-B))
              (call-dyn-eval-iter-new-dir x y z comms dir 1)
              (call-dyn-eval-iter-new-dir x y z comms dir 2)))
         ([string=? (car elem) "CBL"] ;check if B > A
-         (if (> get-prog-mem-val-at-B get-prog-mem-val-at-A)
+         (if (> (get-prog-mem-val-at-B) (get-prog-mem-val-at-A))
              (call-dyn-eval-iter-new-dir x y z comms dir 1)
              (call-dyn-eval-iter-new-dir x y z comms dir 2)))
         ([string=? (car elem) "CIE"] ;check if A == B
-         (if (eq? get-prog-mem-val-at-A get-prog-mem-val-at-B)
+         (if (eq? (get-prog-mem-val-at-A) (get-prog-mem-val-at-B))
              (call-dyn-eval-iter-new-dir x y z comms dir 1)
              (call-dyn-eval-iter-new-dir x y z comms dir 2)))
         ;I/O
