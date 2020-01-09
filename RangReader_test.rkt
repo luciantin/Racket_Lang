@@ -278,7 +278,8 @@
         ([string=? (car elem) "AOB"]
          (travel-and-call x y z comms dir  incr-mem-by-one-at-ptr-B))
         ;OTHER
-        ([string=? (car elem) "NOP"] (display 501)); noop debug 501, treba nastaviti dalje
+        ([string=? (car elem) "NOP"]
+         (call-dyn-eval-iter-new-dir x y z comms dir 1)); noop debug 501, treba nastaviti dalje
         ;ERROR HANDLER :)
         (else (if (string=? (car elem) "IIA")  elem (car elem))) 
         )))
