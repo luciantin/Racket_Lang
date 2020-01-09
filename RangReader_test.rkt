@@ -138,8 +138,11 @@
     (list-ref prog-mem-lst prog-mem-A-ptr))
   (define (get-prog-mem-val-at-B)
     (list-ref prog-mem-lst prog-mem-B-ptr))
-  
-  ;promjena vrijednosti memorije
+
+
+
+                 
+  ;promjena vrijednosti  memorije
   (define (set-prog-mem-A! x)
     (set! prog-mem-lst (list-set prog-mem-lst prog-mem-A-ptr x)))
   (define (set-prog-mem-B! x)
@@ -166,6 +169,12 @@
     (let ((tmp get-prog-mem-val-at-A))
       (set-prog-mem-A! get-prog-mem-val-at-B)
       (set-prog-mem-B! tmp)))
+
+  (define (incr-mem-by-one-at-ptr-A)
+    (set-prog-mem-A! (+ (get-prog-mem-val-at-A) 1)))
+
+  (define (incr-mem-by-one-at-ptr-B)
+    (set-prog-mem-B! (+ (get-prog-mem-val-at-B) 1)))
 
   ;Display mem
   (define (display-val-int-at-A)
@@ -264,6 +273,10 @@
         ([string=? (car elem) "IIB"]
          (travel-and-call x y z comms dir  input-val-int-at-B))
         ;MATH
+        ([string=? (car elem) "AOA"]
+         (travel-and-call x y z comms dir  incr-mem-by-one-at-ptr-B))
+        ([string=? (car elem) "AOB"]
+         (travel-and-call x y z comms dir  incr-mem-by-one-at-ptr-B))
         ;OTHER
         ([string=? (car elem) "NOP"] (display 501)); noop debug 501, treba nastaviti dalje
         ;ERROR HANDLER :)
@@ -272,5 +285,5 @@
   
   (dyn-eval-iter 0 0 0 comm-lst-ddd 4))))
 
-;(dyn-eval-xyz comm-lst-ddd-test)
+;(dyn-eval-xyz comm-lst-ddd-test)  incr-mem-by-one-at-ptr-B
   
