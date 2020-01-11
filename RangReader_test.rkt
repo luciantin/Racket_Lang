@@ -138,18 +138,17 @@
     (list-ref prog-mem-lst prog-mem-A-ptr))
   (define (get-prog-mem-val-at-B)
     (list-ref prog-mem-lst prog-mem-B-ptr))
-
-
-
                  
   ;promjena vrijednosti  memorije
   (define (set-prog-mem-A! x)
     (set! prog-mem-lst (list-set prog-mem-lst prog-mem-A-ptr x)))
   (define (set-prog-mem-B! x)
     (set! prog-mem-lst (list-set prog-mem-lst prog-mem-B-ptr x)))
-  
+
+  ;promijena vrijednosti ptr A i B ... (adrese)            
   (define (change-prog-mem-A-ptr val proc)
     (set! prog-mem-A-ptr (proc prog-mem-A-ptr val)))
+                 
   (define (change-prog-mem-B-ptr val proc)
     (set! prog-mem-B-ptr (proc prog-mem-B-ptr val)))
 
@@ -165,23 +164,67 @@
   (define (add-one-prog-mem-B-ptr) (incr-prog-mem-B-ptr 1))
   (define (sub-one-prog-mem-B-ptr) (decr-prog-mem-B-ptr 1))
 
+  ;swap               
   (define (swap-prog-mem-ptr-A-B)
     (let ((tmp get-prog-mem-val-at-A))
       (set-prog-mem-A! get-prog-mem-val-at-B)
       (set-prog-mem-B! tmp)))
 
+   ;reset val              
+  (define (reset-mem-val-at-ptr-A)
+    (set-prog-mem-A! 0))
+
+  (define (reset-mem-val-at-ptr-B)
+    (set-prog-mem-B! 0))
+                 
+   ;incr val              
   (define (incr-mem-by-one-at-ptr-A)
     (set-prog-mem-A! (+ (get-prog-mem-val-at-A) 1)))
 
   (define (incr-mem-by-one-at-ptr-B)
     (set-prog-mem-B! (+ (get-prog-mem-val-at-B) 1)))
 
+  ;decr val
+  (define (decr-mem-by-one-at-ptr-A)
+    (set-prog-mem-A! (- (get-prog-mem-val-at-A) 1)))
+
+  (define (decr-mem-by-one-at-ptr-B)
+    (set-prog-mem-B! (- (get-prog-mem-val-at-B) 1)))               
+                 
+  ;copy val             
+  (define (copy-val-at-A-into-B)
+    (set-prog-mem-B! (get-prog-mem-val-at-A)))
+  
+  (define (copy-val-at-B-into-A)
+    (set-prog-mem-A! (get-prog-mem-val-at-B)))
+
+  ;add
+  (define (add-val-to-B)
+    (set-prog-mem-B! (+ (get-prog-mem-val-at-A) (get-prog-mem-val-at-B))))
+  
+  (define (add-val-to-A)
+    (set-prog-mem-A! (+ (get-prog-mem-val-at-A) (get-prog-mem-val-at-B))))
+
+  ;sub
+  (define (sub-val-to-A)
+    (set-prog-mem-A! (- (get-prog-mem-val-at-A) (get-prog-mem-val-at-B))))
+  
+  (define (sub-val-to-B)
+    (set-prog-mem-B! (- (get-prog-mem-val-at-A) (get-prog-mem-val-at-B))))
+                 
   ;Display mem
   (define (display-val-int-at-A)
     (display (get-prog-mem-val-at-A)))
 
   (define (display-val-int-at-B)
     (display (get-prog-mem-val-at-B)))
+
+  (define (display-val-ascii-at-A)
+    (display (integer->char (get-prog-mem-val-at-A))))
+
+  (define (display-val-ascii-at-B)
+    (display (integer->char (get-prog-mem-val-at-B))))
+                 
 
   ;Input mem
   (define (input-val-int-at-A)
@@ -218,7 +261,8 @@
     (let ((elem (get-comm-lst-elem x y z))) ;uzmi naredbu iz polja
       (cond
         ;DIRECTION
-        ([string=? (car elem) "STP"] #t) ;stop
+        ([string=? (car elem) "STP"] #t) ;stop prog && row
+        ([string=? (car elem) "STO"] #t) ;stop prog
         ([string=? (car elem) "RUP"] ;row up    #1
          (call-dyn-eval-iter-new-dir x y z comms 1 1))
         ([string=? (car elem) "RDW"] ;row down  #2
@@ -242,6 +286,10 @@
          (travel-and-call x y z comms dir sub-one-prog-mem-B-ptr))
         ([string=? (car elem) "SWP"] ;swap A <-> B   
          (travel-and-call x y z comms dir swap-prog-mem-ptr-A-B))
+        ([string=? (car elem) "CPA"] ;cp A -> B
+         (travel-and-call x y z comms dir copy-val-at-A-into-B))
+        ([string=? (car elem) "CPB"] ;cp B -> A
+         (travel-and-call x y z comms dir copy-val-at-B-into-A))
         ;CONTROL if #f skip next command
         ([string=? (car elem) "CAZ"] ;check if A zero
          (if (equal? (get-prog-mem-val-at-A) 0)
@@ -264,24 +312,45 @@
              (call-dyn-eval-iter-new-dir x y z comms dir 1)
              (call-dyn-eval-iter-new-dir x y z comms dir 2)))
         ;I/O
-        ([string=? (car elem) "OIA"]
+        ([string=? (car elem) "OIA"] ;out int val at A
          (travel-and-call x y z comms dir  display-val-int-at-A))
-        ([string=? (car elem) "OIB"]
+        ([string=? (car elem) "OIB"] ;out int val at B
          (travel-and-call x y z comms dir  display-val-int-at-B))
-        ([string=? (car elem) "IIA"]
+        ([string=? (car elem) "OAA"] ;out int val at A
+         (travel-and-call x y z comms dir  display-val-ascii-at-A))
+        ([string=? (car elem) "OAB"] ;out int val at B
+         (travel-and-call x y z comms dir  display-val-ascii-at-B))
+        ([string=? (car elem) "IIA"] ;in int val in  A
          (travel-and-call x y z comms dir  input-val-int-at-A))
-        ([string=? (car elem) "IIB"]
+        ([string=? (car elem) "IIB"] ;in int val in  B
          (travel-and-call x y z comms dir  input-val-int-at-B))
         ;MATH
-        ([string=? (car elem) "AOA"]
+        ([string=? (car elem) "AOA"] ;add one to A
+         (travel-and-call x y z comms dir  incr-mem-by-one-at-ptr-A))
+        ([string=? (car elem) "AOB"] ;add one to B
          (travel-and-call x y z comms dir  incr-mem-by-one-at-ptr-B))
-        ([string=? (car elem) "AOB"]
-         (travel-and-call x y z comms dir  incr-mem-by-one-at-ptr-B))
+        ([string=? (car elem) "SOA"] ;sub one form A
+         (travel-and-call x y z comms dir  decr-mem-by-one-at-ptr-A))
+        ([string=? (car elem) "SOB"] ;sub one from B 
+         (travel-and-call x y z comms dir  decr-mem-by-one-at-ptr-B))
+        ([string=? (car elem) "REA"] ;reset val at A
+         (travel-and-call x y z comms dir  reset-mem-val-at-ptr-A))
+        ([string=? (car elem) "REB"] ;reset val at B
+         (travel-and-call x y z comms dir  reset-mem-val-at-ptr-B))
+        ([string=? (car elem) "ADA"] ;A + B save in A
+         (travel-and-call x y z comms dir  add-val-to-A))
+        ([string=? (car elem) "ADB"] ;A + B save in B
+         (travel-and-call x y z comms dir  add-val-to-B))
+        ([string=? (car elem) "SBA"] ;A - B save in A
+         (travel-and-call x y z comms dir  sub-val-to-A))
+        ([string=? (car elem) "SBB"] ;A - B save in B
+         (travel-and-call x y z comms dir  sub-val-to-B))
+        
         ;OTHER
         ([string=? (car elem) "NOP"]
-         (call-dyn-eval-iter-new-dir x y z comms dir 1)); noop debug 501, treba nastaviti dalje
-        ;ERROR HANDLER :)
-        (else (if (string=? (car elem) "IIA")  elem (car elem))) 
+         (call-dyn-eval-iter-new-dir x y z comms dir 1)); treba nastaviti dalje
+        ;ERROR HANDLER
+        (else (display (car elem))) 
         )))
   
   (dyn-eval-iter 0 0 0 comm-lst-ddd 4))))

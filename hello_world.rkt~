@@ -1,7 +1,14 @@
-#lang reader "fmlangV2.rkt"
+#lang reader "RangReader_test.rkt"
+STR
+AOA OIA AOA OIA IIA CAZ IIA OIA OIB RDW STP
+NOP PUP RLF NOP NOP NOP NOP NOP NOP RLF STP
+NEW
+NOP NOP NOP STP
+NOP RRT OIA PUP STP
+NEW
+NOP NOP NOP NOP STP
+RDW OIA OIA RLF STP
+RRT OIA IIA OIA STP
+END
 
-toinž bdykb
-higžizu
-tzž
-ććććčččććšđšđ
-kkkčćčććčćč
+
