@@ -1,9 +1,9 @@
 #lang racket
 (require syntax/datum)
 
-;(define comm-set-ddd '())
+(define comm-set-ddd '())
 
-;(define com-ss-dd '())
+(define com-ss-dd '())
 
 (define (read-syntax path port)
   ;(define
@@ -77,14 +77,9 @@
 
   (define com-s-d
     (with-datum ([(a ...) (list (form-list-of-pages '() 0))])
-      (datum (define com-lst 'a ...))))
+      (datum (define xxx 'a ...))))
 
-  (define page-start
-   (with-datum ([(a ...) (list start-y)])
-     (datum (define pg-strt a ...))))
-
-  ;(display start-y)
-  ;(display page-start)
+  
   ;(set! comm-set-ddd (form-list-of-pages '() 0))
   ;(set! com-ss-dd (append '(define comm-lst-ddd-test) (list comm-set-ddd)))
   ;(display com-s-d)
@@ -92,10 +87,9 @@
                            prog-mem-def
                            cmdd
                            coms
-                           (list com-s-d)
-                           (list page-start)
                            
-                           ;'((displayln pg-strt))
+                           (list com-s-d)
+                           ;'((displayln xxx))
                            ;'((displayln " "))
                            ;'((displayln comm-lst-ddd-test))
                            ;'((equal? xxx comm-lst-ddd-test))
@@ -103,7 +97,7 @@
                            ;'((car (car (car xxx))))
                            ;'((car (car (car comm-lst-ddd-test))))
                            ;'((displayln " "))
-                           '((dyn-eval-xyz com-lst pg-strt))
+                           '((dyn-eval-xyz xxx))
                            )))
 
 ;(datum->syntax #f (append '(module lucy racket) coms prog-mem-def cmdd '((dyn-eval-xyz comm-lst-ddd-test)))))
@@ -133,7 +127,7 @@
 (define prog-mem-B-ptr 2))) 
 
 
-(define cmdd '((define (dyn-eval-xyz comm-lst-ddd start-page)
+(define cmdd '((define (dyn-eval-xyz comm-lst-ddd)
 
   ;vrati elem na x y z poz
   (define (get-comm-lst-elem x y z)
@@ -359,5 +353,7 @@
         (else (display (car elem))) 
         )))
   
-  (dyn-eval-iter 0 0 start-page comm-lst-ddd 4))))
- 
+  (dyn-eval-iter 0 0 0 comm-lst-ddd 4))))
+
+;(dyn-eval-xyz comm-lst-ddd-test)  incr-mem-by-one-at-ptr-B
+  
