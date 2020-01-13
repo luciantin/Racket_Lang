@@ -1,4 +1,6 @@
-#lang reader "RangReader_test.rkt"
+#lang reader "RangReader.rkt"
+NEW
+STO STP
 STR
 PUP NOP RRT NOP NOP NOP RRT CAZ PUP OIA SOA RDW STP 
 RRT NOP RUP NOP NOP NOP RUP NOP NOP NOP NOP RLF STP
