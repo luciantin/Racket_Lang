@@ -40,7 +40,7 @@
       ([string=? cmd "STP"] (cons #\S lst)) ;end of line
       ([string=? cmd "NEW"] (cons #\# lst)) ;new page
       ([string=? cmd "END"] (cons #\+ lst)) ;end of file
-      (else (get-list-of-commands (append lst (list (list (string->symbol cmd))))))))) 
+      (else (get-list-of-commands (append lst (list (list cmd)))))))) 
 
 ;OK
 (define (form-page-from-lists comm-lst)
@@ -80,15 +80,12 @@
   
   (datum->syntax #f (append '(module idfk racket)
                            prog-mem-def
-                           cmdd                           
+                           cmdd
                            
                            (list com-s-d)
-                           ;(list page-start)
-
-                           '((display com-lst))
+                           (list page-start)
                            
-                           ;'((dyn-eval-xyz com-lst pg-strt))
-                           )))
+                           '((dyn-eval-xyz com-lst pg-strt)))))
 
 
 
@@ -99,11 +96,7 @@
 ;memorija
 (define prog-mem-def '((define prog-mem-lst '(0 0 0 0 0 0)) 
 (define prog-mem-A-ptr 2)
-(define prog-mem-B-ptr 2)))
-
-
-
-
+(define prog-mem-B-ptr 2))) 
 
 
 (define cmdd '((define (dyn-eval-xyz comm-lst-ddd start-page)
