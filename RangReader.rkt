@@ -48,7 +48,7 @@
     (cond
       ([eq? (car crnt-comm-lst) #\S]
        (form-page-from-lists
-        (append comm-lst (list (append (cdr crnt-comm-lst) (list '("STP")))))))
+        (append comm-lst (list (append (cdr crnt-comm-lst) (list '(STP)))))))
       ([eq? (car crnt-comm-lst) #\#] (cons #\# comm-lst))
       ([eq? (car crnt-comm-lst) #\-] (cons #\- comm-lst))
       ([eq? (car crnt-comm-lst) #\+] (cons #\+ comm-lst))
@@ -80,21 +80,22 @@
   
   (datum->syntax #f (append '(module idfk racket)
                            prog-mem-def
-                           cmdd                           
+                           cmdd
+                           
+                           ;prog-comm-tb-dir-ops
+                           ;prog-comm-tb-single-ops
+                           ;prog-comm-tb-cntrl-ops
                            
                            (list com-s-d)
-                           ;(list page-start)
+                           (list page-start)
 
-                           '((display com-lst))
+                           ;'((display com-lst))
                            
-                           ;'((dyn-eval-xyz com-lst pg-strt))
+                           '((dyn-eval-xyz com-lst pg-strt))
                            )))
 
 
-
 (provide read-syntax)
-
-
 
 ;memorija
 (define prog-mem-def '((define prog-mem-lst '(0 0 0 0 0 0)) 
@@ -102,12 +103,10 @@
 (define prog-mem-B-ptr 2)))
 
 
-
-
-
-
 (define cmdd '((define (dyn-eval-xyz comm-lst-ddd start-page)
 
+
+                 
   ;vrati elem na x y z poz
   (define (get-comm-lst-elem x y z)
     (list-ref (list-ref (list-ref comm-lst-ddd z) y) x))
@@ -215,122 +214,134 @@
   (define (add-one x) (+ x 1))
   (define (sub-one x) (- x 1))
 
-  ;možda nece trebat
-  (define ns-es (make-base-namespace))
+                 
+  ;Prog-noop
+  (define noop-cntr 0)
+  (define (prog-noop) (set! noop-cntr (+ noop-cntr 1)))
+                 
+ ;Prog-check (skip)
+  (define (prog-chck-A-z)
+    (if (equal? (get-prog-mem-val-at-A) 0) 1 2))
+                 
+  (define (prog-chck-B-z)
+    (if (eq? (get-prog-mem-val-at-B) 0) 1 2))
+                 
+  (define (prog-chck-A-l)
+    (if (> (get-prog-mem-val-at-A) (get-prog-mem-val-at-B)) 1 2))
+                 
+  (define (prog-chck-B-l)
+    (if (> (get-prog-mem-val-at-B) (get-prog-mem-val-at-A)) 1 2))
+    
+  (define (prog-chck-AB-eq)
+    (if (eq? (get-prog-mem-val-at-A) (get-prog-mem-val-at-B)) 1 2))
 
+  ;zaustavljanje programa - nije radilo kako treba
+  ;(define (prog-row-halt) #t (exit))
+  ;(define (prog-rndm-halt) #t (error "0"))
+
+  ;možda nece trebat
+  ;(define ns-es (make-base-namespace)) ne
+
+
+                 ;PROG COM TABLES
+
+  (define comm-ch-dir-ops-hsh-tb (hash
+                                  'RUP 'prog-dir-Rw-Up
+                                  'RDW 'prog-dir-Rw-Dw
+                                  'RLF 'prog-dir-Rw-Lf
+                                  'RRT 'prog-dir-Rw-Rt
+                                  'PUP 'prog-dir-Pg-Up
+                                  'PDW 'prog-dir-Pg-Dw                                  
+                                  ))
+                 
+  (define comm-single-ops-hsh-tb (hash
+                                  ;'STP prog-row-halt
+                                  ;'STO prog-rndm-halt
+                                  
+                                  'NEA add-one-prog-mem-A-ptr
+                                  'PEA sub-one-prog-mem-A-ptr
+                                  'NEB add-one-prog-mem-B-ptr
+                                  'PEB sub-one-prog-mem-B-ptr
+                                  'SWP swap-prog-mem-ptr-A-B
+                                  'CPA copy-val-at-A-into-B
+                                  'CPB copy-val-at-B-into-A
+                                  
+                                  'OIA display-val-int-at-A
+                                  'OIB display-val-int-at-B
+                                  'OAA display-val-ascii-at-A
+                                  'OAB display-val-ascii-at-B
+                                  'IIA input-val-int-at-A
+                                  'IIB input-val-int-at-B
+                                  
+                                  'AOA incr-mem-by-one-at-ptr-A
+                                  'AOB incr-mem-by-one-at-ptr-B
+                                  'SOA decr-mem-by-one-at-ptr-A
+                                  'SOB decr-mem-by-one-at-ptr-B
+                                  'REA reset-mem-val-at-ptr-A
+                                  'REB reset-mem-val-at-ptr-B
+                                  'ADA add-val-to-A
+                                  'ADB add-val-to-B
+                                  'SBA sub-val-to-A
+                                  'SBB sub-val-to-B
+
+                                  'NOP prog-noop
+                                  ))
+                 
+  (define comm-cntrl-ops-hsh-tb (hash
+                                 'CAZ prog-chck-A-z
+                                 'CBZ prog-chck-B-z
+                                 'CAL prog-chck-A-l
+                                 'CBL prog-chck-B-l
+                                 'CIE prog-chck-AB-eq
+                                 ))
+                 
+                 
   ;glavna funkcija za interpretaciju 
   (define (dyn-eval-iter x y z comms dir)
     
     ;pozovi dyn-eval-iter sa novim smjerom
     (define (call-dyn-eval-iter-new-dir x y z comms dir step)
       (cond
-        ([eq? dir 1] (dyn-eval-iter x (- y step) z comms dir))
-        ([eq? dir 2] (dyn-eval-iter x (+ y step) z comms dir))
-        ([eq? dir 3] (dyn-eval-iter (- x step) y z comms dir))
-        ([eq? dir 4] (dyn-eval-iter (+ x step) y z comms dir))
-        ([eq? dir 5] (dyn-eval-iter x y (+ z step) comms dir))
-        ([eq? dir 6] (dyn-eval-iter x y (- z step) comms dir))
-        (else 404))) ;nebi nikad trebalo doci do tuda
+        ([eq? dir 'prog-dir-Rw-Up] (dyn-eval-iter x (- y step) z comms dir)) ;row up
+        ([eq? dir 'prog-dir-Rw-Dw] (dyn-eval-iter x (+ y step) z comms dir)) ;row dw
+        ([eq? dir 'prog-dir-Rw-Lf] (dyn-eval-iter (- x step) y z comms dir)) ;row lf
+        ([eq? dir 'prog-dir-Rw-Rt] (dyn-eval-iter (+ x step) y z comms dir)) ;row rt
+        ([eq? dir 'prog-dir-Pg-Up] (dyn-eval-iter x y (+ z step) comms dir)) ;page up
+        ([eq? dir 'prog-dir-Pg-Dw] (dyn-eval-iter x y (- z step) comms dir)) ;page dw
+        (else (display dir)))) ;nebi nikad trebalo doci do tuda
 
-    ;manje za pisat, odradi proc i nastavi dalje
-    (define (travel-and-call x y z comms dir proc)
-      (proc) (call-dyn-eval-iter-new-dir x y z comms dir 1))
-    
+    ;nastavi dalje ali za broj koraka koji vrati if
+    (define (travel-by-proc x y z comms dir proc)
+      (call-dyn-eval-iter-new-dir x y z comms dir (proc)))
+
+    ;odradi proc i nastavi dalje
+    (define (travel-and-call x y z comms dir proc step)
+      (proc) (call-dyn-eval-iter-new-dir x y z comms dir step))
+
     ;interpretiraj naredbu
-    (let ((elem (get-comm-lst-elem x y z))) ;uzmi naredbu iz polja
+    (let ((elem (car (get-comm-lst-elem x y z)))) ;uzmi naredbu iz polja
       (cond
-        ;DIRECTION
-        ([string=? (car elem) "STP"] #t) ;stop prog && row
-        ([string=? (car elem) "STO"] #t) ;stop prog
-        ([string=? (car elem) "RUP"] ;row up    #1
-         (call-dyn-eval-iter-new-dir x y z comms 1 1))
-        ([string=? (car elem) "RDW"] ;row down  #2
-         (call-dyn-eval-iter-new-dir x y z comms 2 1))
-        ([string=? (car elem) "RLF"] ;row left  #3
-         (call-dyn-eval-iter-new-dir x y z comms 3 1))
-        ([string=? (car elem) "RRT"] ;row right #4
-         (call-dyn-eval-iter-new-dir x y z comms 4 1))
-        ([string=? (car elem) "PUP"] ;page up   #5
-         (call-dyn-eval-iter-new-dir x y z comms 5 1))
-        ([string=? (car elem) "PDW"] ;page down #6
-         (call-dyn-eval-iter-new-dir x y z comms 6 1))
-        ;PROG-MEM
-        ([string=? (car elem) "NEA"] ;next elem A
-         (travel-and-call x y z comms dir add-one-prog-mem-A-ptr))
-        ([string=? (car elem) "PEA"] ;prev elem A
-         (travel-and-call x y z comms dir sub-one-prog-mem-A-ptr))
-        ([string=? (car elem) "NEB"] ;next elem B
-         (travel-and-call x y z comms dir add-one-prog-mem-B-ptr))
-        ([string=? (car elem) "PEB"] ;prev elem B
-         (travel-and-call x y z comms dir sub-one-prog-mem-B-ptr))
-        ([string=? (car elem) "SWP"] ;swap A <-> B   
-         (travel-and-call x y z comms dir swap-prog-mem-ptr-A-B))
-        ([string=? (car elem) "CPA"] ;cp A -> B
-         (travel-and-call x y z comms dir copy-val-at-A-into-B))
-        ([string=? (car elem) "CPB"] ;cp B -> A
-         (travel-and-call x y z comms dir copy-val-at-B-into-A))
-        ;CONTROL if #f skip next command
-        ([string=? (car elem) "CAZ"] ;check if A zero
-         (if (equal? (get-prog-mem-val-at-A) 0)
-             (call-dyn-eval-iter-new-dir x y z comms dir 1)
-             (call-dyn-eval-iter-new-dir x y z comms dir 2)))
-        ([string=? (car elem) "CBZ"] ;check if B zero
-         (if (eq? (get-prog-mem-val-at-B) 0)
-             (call-dyn-eval-iter-new-dir x y z comms dir 1)
-             (call-dyn-eval-iter-new-dir x y z comms dir 2)))
-        ([string=? (car elem) "CAL"] ;check if A > B
-         (if (> (get-prog-mem-val-at-A) (get-prog-mem-val-at-B))
-             (call-dyn-eval-iter-new-dir x y z comms dir 1)
-             (call-dyn-eval-iter-new-dir x y z comms dir 2)))
-        ([string=? (car elem) "CBL"] ;check if B > A
-         (if (> (get-prog-mem-val-at-B) (get-prog-mem-val-at-A))
-             (call-dyn-eval-iter-new-dir x y z comms dir 1)
-             (call-dyn-eval-iter-new-dir x y z comms dir 2)))
-        ([string=? (car elem) "CIE"] ;check if A == B
-         (if (eq? (get-prog-mem-val-at-A) (get-prog-mem-val-at-B))
-             (call-dyn-eval-iter-new-dir x y z comms dir 1)
-             (call-dyn-eval-iter-new-dir x y z comms dir 2)))
-        ;I/O
-        ([string=? (car elem) "OIA"] ;out int val at A
-         (travel-and-call x y z comms dir  display-val-int-at-A))
-        ([string=? (car elem) "OIB"] ;out int val at B
-         (travel-and-call x y z comms dir  display-val-int-at-B))
-        ([string=? (car elem) "OAA"] ;out int val at A
-         (travel-and-call x y z comms dir  display-val-ascii-at-A))
-        ([string=? (car elem) "OAB"] ;out int val at B
-         (travel-and-call x y z comms dir  display-val-ascii-at-B))
-        ([string=? (car elem) "IIA"] ;in int val in  A
-         (travel-and-call x y z comms dir  input-val-int-at-A))
-        ([string=? (car elem) "IIB"] ;in int val in  B
-         (travel-and-call x y z comms dir  input-val-int-at-B))
-        ;MATH
-        ([string=? (car elem) "AOA"] ;add one to A
-         (travel-and-call x y z comms dir  incr-mem-by-one-at-ptr-A))
-        ([string=? (car elem) "AOB"] ;add one to B
-         (travel-and-call x y z comms dir  incr-mem-by-one-at-ptr-B))
-        ([string=? (car elem) "SOA"] ;sub one form A
-         (travel-and-call x y z comms dir  decr-mem-by-one-at-ptr-A))
-        ([string=? (car elem) "SOB"] ;sub one from B 
-         (travel-and-call x y z comms dir  decr-mem-by-one-at-ptr-B))
-        ([string=? (car elem) "REA"] ;reset val at A
-         (travel-and-call x y z comms dir  reset-mem-val-at-ptr-A))
-        ([string=? (car elem) "REB"] ;reset val at B
-         (travel-and-call x y z comms dir  reset-mem-val-at-ptr-B))
-        ([string=? (car elem) "ADA"] ;A + B save in A
-         (travel-and-call x y z comms dir  add-val-to-A))
-        ([string=? (car elem) "ADB"] ;A + B save in B
-         (travel-and-call x y z comms dir  add-val-to-B))
-        ([string=? (car elem) "SBA"] ;A - B save in A
-         (travel-and-call x y z comms dir  sub-val-to-A))
-        ([string=? (car elem) "SBB"] ;A - B save in B
-         (travel-and-call x y z comms dir  sub-val-to-B))
+        ((hash-has-key? comm-single-ops-hsh-tb elem) ;obicne operacije
+         (travel-and-call x y z comms dir (hash-ref comm-single-ops-hsh-tb elem) 1))
         
-        ;OTHER
-        ([string=? (car elem) "NOP"]
-         (call-dyn-eval-iter-new-dir x y z comms dir 1)); treba nastaviti dalje
-        ;ERROR HANDLER
-        (else (display (car elem))) 
+        ((hash-has-key? comm-ch-dir-ops-hsh-tb elem) ;change dir
+         (call-dyn-eval-iter-new-dir x y z comms (hash-ref comm-ch-dir-ops-hsh-tb elem) 1))
+
+        ((hash-has-key? comm-cntrl-ops-hsh-tb elem) ;za obradu proc koje vracaju broj koraka
+         (travel-by-proc x y z comms elem (hash-ref comm-cntrl-ops-hsh-tb elem)))
+
+        ((eq? elem 'STP) #t)
+
+        ((eq? elem 'STO) #t)
+        
+        (else (displayln 'ERROR_Valjda) (display elem)) ;error handler        
         )))
   
-  (dyn-eval-iter 0 0 start-page comm-lst-ddd 4))))
+ (dyn-eval-iter 0 0 start-page comm-lst-ddd 'prog-dir-Rw-Rt) ;pocetni poziv
+ )))
+
+
+
+  
+  
  
