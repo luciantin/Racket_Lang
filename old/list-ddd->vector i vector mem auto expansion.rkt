@@ -45,7 +45,7 @@
                        ))
 
 
-(list-ddd->vector prog-lst-tst)
+;(list-ddd->vector prog-lst-tst)
 
 
 (define (map-lst-to-vect lst) (map list->vector lst))
@@ -63,37 +63,61 @@
 
 
 (newline)
-(vector-ref (vector-ref (vector-ref x 0)0)0) ;single comm ref
+;(vector-ref (vector-ref (vector-ref x 0)0)0) ;single comm ref
 (newline)
-(vector-ref (vector-ref x 0) 0) ;row ref
+;(vector-ref (vector-ref x 0) 0) ;row ref
 (newline)
-(vector-ref x 0) ;pg ref
+;(vector-ref x 0) ;pg ref
 
 
 
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; Dyn mem ?
+
+(define A 0)
+(define B 0)
+
+
+(define ram (make-vector 1 0))
+
+;ram
+
+;(vector-append ram #(0))
+
+(define (prog-mem-add-front)
+  (set! ram (vector-append #(0) ram)))
+
+(define (prog-mem-add-rear)
+  (set! ram (vector-append ram #(0))))
+
+(define (incr-prog-mem-A-ptr)
+  (let ((vec-size (- (vector-length ram) 1)))
+    (cond
+      ((>= A vec-size) (prog-mem-add-rear) (set! A (+ A 1)))
+      (else (set! A (+ A 1))))))
+    
+(define (decr-prog-mem-A-ptr)
+  (cond
+    ((eq? A 0) (prog-mem-add-front) (set! B (+ B 1)))
+    (else (set! A (- A 1)))))
+
+
+(define (incr-prog-mem-B-ptr)
+  (let ((vec-size (- (vector-length ram) 1)))
+    (cond
+      ((>= B vec-size) (prog-mem-add-rear) (set! B (+ B 1)))
+      (else (set! B (+ B 1))))))
+    
+(define (decr-prog-mem-B-ptr)
+  (cond
+    ((eq? B 0) (prog-mem-add-front) (set! A (+ A 1)))
+    (else (set! B (- B 1)))))
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+(define (view-mem) (displayln ram) (displayln A) (displayln B))
 
 
 

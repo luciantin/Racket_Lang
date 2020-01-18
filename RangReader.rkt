@@ -94,7 +94,8 @@
                            (list com-s-d)
                            (list page-start)
 
-                           ;'((display com-lst))
+                           ;'((displayln com-lst))
+                           ;'((displayln prog-mem-lst))
                            
                            '((dyn-eval-xyz com-lst pg-strt))
                            )))
@@ -103,49 +104,61 @@
 (provide read-syntax)
 
 ;memorija
-(define prog-mem-def '((define prog-mem-lst '(0 0 0 0 0 0)) 
-(define prog-mem-A-ptr 2)
-(define prog-mem-B-ptr 2)))
+(define prog-mem-def '((define prog-mem-lst (make-vector 1 0)) 
+                       (define prog-mem-A-ptr 0)
+                       (define prog-mem-B-ptr 0)))
 
 
 (define cmdd '((define (dyn-eval-xyz comm-lst-ddd start-page)
 
 
                  
-  ;vrati elem na x y z poz
+  ;vrati elem na x y z poz (naredbu)
   (define (get-comm-lst-elem x y z)
     (vector-ref (vector-ref (vector-ref comm-lst-ddd z) y) x))
 
   ;get vrijednost memorije
   (define (get-prog-mem-val-at-A)
-    (list-ref prog-mem-lst prog-mem-A-ptr))
+    (vector-ref prog-mem-lst prog-mem-A-ptr))
   (define (get-prog-mem-val-at-B)
-    (list-ref prog-mem-lst prog-mem-B-ptr))
+    (vector-ref prog-mem-lst prog-mem-B-ptr))
                  
   ;promjena vrijednosti  memorije
   (define (set-prog-mem-A! x)
-    (set! prog-mem-lst (list-set prog-mem-lst prog-mem-A-ptr x)))
+    (vector-set! prog-mem-lst prog-mem-A-ptr x))
   (define (set-prog-mem-B! x)
-    (set! prog-mem-lst (list-set prog-mem-lst prog-mem-B-ptr x)))
+    (vector-set! prog-mem-lst prog-mem-B-ptr x))
 
-  ;promijena vrijednosti ptr A i B ... (adrese)            
-  (define (change-prog-mem-A-ptr val proc)
-    (set! prog-mem-A-ptr (proc prog-mem-A-ptr val)))
-                 
-  (define (change-prog-mem-B-ptr val proc)
-    (set! prog-mem-B-ptr (proc prog-mem-B-ptr val)))
+  ;promijena vrijednosti ptr A i B ... (adrese)   
+  (define (prog-mem-add-front)
+    (set! prog-mem-lst (vector-append (make-vector 1 0) prog-mem-lst)))
 
-  (define (incr-prog-mem-A-ptr x) (change-prog-mem-A-ptr x +))
-  (define (decr-prog-mem-A-ptr x) (change-prog-mem-A-ptr x -))
+  (define (prog-mem-add-rear)
+    (set! prog-mem-lst (vector-append prog-mem-lst (make-vector 1 0))))
 
-  (define (incr-prog-mem-B-ptr x) (change-prog-mem-B-ptr x +))
-  (define (decr-prog-mem-B-ptr x) (change-prog-mem-B-ptr x -))
-  
-  (define (add-one-prog-mem-A-ptr) (incr-prog-mem-A-ptr 1))
-  (define (sub-one-prog-mem-A-ptr) (decr-prog-mem-A-ptr 1))
-  
-  (define (add-one-prog-mem-B-ptr) (incr-prog-mem-B-ptr 1))
-  (define (sub-one-prog-mem-B-ptr) (decr-prog-mem-B-ptr 1))
+  (define (incr-prog-mem-A-ptr)
+    (let ((vec-size (- (vector-length prog-mem-lst) 1)))
+      (cond
+        ((>= prog-mem-A-ptr vec-size) (prog-mem-add-rear) (set! prog-mem-A-ptr (+ prog-mem-A-ptr 1)))
+        (else (set! prog-mem-A-ptr (+ prog-mem-A-ptr 1))))))
+    
+  (define (decr-prog-mem-A-ptr)
+    (cond
+      ((eq? prog-mem-A-ptr 0) (prog-mem-add-front) (set! prog-mem-B-ptr (+ prog-mem-B-ptr 1)))
+      (else (set! prog-mem-A-ptr (- prog-mem-A-ptr 1)))))
+
+
+  (define (incr-prog-mem-B-ptr)
+    (let ((vec-size (- (vector-length prog-mem-lst) 1)))
+      (cond
+        ((>= prog-mem-B-ptr vec-size) (prog-mem-add-rear) (set! prog-mem-B-ptr (+ prog-mem-B-ptr 1)))
+        (else (set! prog-mem-B-ptr (+ prog-mem-B-ptr 1))))))
+    
+  (define (decr-prog-mem-B-ptr)
+    (cond
+      ((eq? prog-mem-B-ptr 0) (prog-mem-add-front) (set! prog-mem-A-ptr (+ prog-mem-A-ptr 1)))
+      (else (set! prog-mem-B-ptr (- prog-mem-B-ptr 1)))))
+
 
   ;swap               
   (define (swap-prog-mem-ptr-A-B)
@@ -240,14 +253,6 @@
   (define (prog-chck-AB-eq)
     (if (eq? (get-prog-mem-val-at-A) (get-prog-mem-val-at-B)) 1 2))
 
-  ;zaustavljanje programa - nije radilo kako treba
-  ;(define (prog-row-halt) #t (exit))
-  ;(define (prog-rndm-halt) #t (error "0"))
-
-  ;možda nece trebat
-  ;(define ns-es (make-base-namespace)) ne
-
-
                  ;PROG COM TABLES
 
   (define comm-ch-dir-ops-hsh-tb (hash
@@ -259,14 +264,11 @@
                                   'PDW 'prog-dir-Pg-Dw                                  
                                   ))
                  
-  (define comm-single-ops-hsh-tb (hash
-                                  ;'STP prog-row-halt
-                                  ;'STO prog-rndm-halt
-                                  
-                                  'NEA add-one-prog-mem-A-ptr
-                                  'PEA sub-one-prog-mem-A-ptr
-                                  'NEB add-one-prog-mem-B-ptr
-                                  'PEB sub-one-prog-mem-B-ptr
+  (define comm-single-ops-hsh-tb (hash                                  
+                                  'NEA incr-prog-mem-A-ptr
+                                  'PEA decr-prog-mem-A-ptr
+                                  'NEB incr-prog-mem-B-ptr
+                                  'PEB decr-prog-mem-B-ptr
                                   'SWP swap-prog-mem-ptr-A-B
                                   'CPA copy-val-at-A-into-B
                                   'CPB copy-val-at-B-into-A
@@ -313,7 +315,7 @@
         ([eq? dir 'prog-dir-Rw-Rt] (dyn-eval-iter (+ x step) y z comms dir)) ;row rt
         ([eq? dir 'prog-dir-Pg-Up] (dyn-eval-iter x y (+ z step) comms dir)) ;page up
         ([eq? dir 'prog-dir-Pg-Dw] (dyn-eval-iter x y (- z step) comms dir)) ;page dw
-        (else (display dir)))) ;nebi nikad trebalo doci do tuda
+        (else (display dir) (display "New dir Error")))) ;nebi nikad trebalo doci do tuda
 
     ;nastavi dalje ali za broj koraka koji vrati if
     (define (travel-by-proc x y z comms dir proc)
@@ -333,7 +335,7 @@
          (call-dyn-eval-iter-new-dir x y z comms (hash-ref comm-ch-dir-ops-hsh-tb elem) 1))
 
         ((hash-has-key? comm-cntrl-ops-hsh-tb elem) ;za obradu proc koje vracaju broj koraka
-         (travel-by-proc x y z comms elem (hash-ref comm-cntrl-ops-hsh-tb elem)))
+         (travel-by-proc x y z comms dir (hash-ref comm-cntrl-ops-hsh-tb elem)))
 
         ((eq? elem 'STP) #t) ;row stop
  
