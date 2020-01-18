@@ -68,14 +68,9 @@
       ([eq? (car crnt-pg) #\+] (append pgs-lst (list (cdr crnt-pg))))
       (else 555))));nebi trebalo
   
-  (define (prog-list-dddd->vector prog-lst) ;brže ako je immutable vector ? ?
-  (list->vector
-   (map (lambda (lst)
-          (list->vector (map (lambda (lsa) (list->vector  lsa)) lst)))
-        prog-lst)))
-
+  
   (define com-s-d
-    (with-datum ([(a ...) (list (prog-list-dddd->vector (form-list-of-pages '() 0)))])
+    (with-datum ([(a ...) (list (form-list-of-pages '() 0))])
       (datum (define com-lst 'a ...))))
 
   (define page-start
@@ -114,7 +109,7 @@
                  
   ;vrati elem na x y z poz
   (define (get-comm-lst-elem x y z)
-    (vector-ref (vector-ref (vector-ref comm-lst-ddd z) y) x))
+    (list-ref (list-ref (list-ref comm-lst-ddd z) y) x))
 
   ;get vrijednost memorije
   (define (get-prog-mem-val-at-A)
@@ -335,9 +330,9 @@
         ((hash-has-key? comm-cntrl-ops-hsh-tb elem) ;za obradu proc koje vracaju broj koraka
          (travel-by-proc x y z comms elem (hash-ref comm-cntrl-ops-hsh-tb elem)))
 
-        ((eq? elem 'STP) #t) ;row stop
- 
-        ((eq? elem 'STO) #t) ;obican stop
+        ((eq? elem 'STP) #t)
+
+        ((eq? elem 'STO) #t)
         
         (else (displayln 'ERROR_Valjda) (display elem)) ;error handler        
         )))
