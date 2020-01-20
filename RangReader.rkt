@@ -68,7 +68,7 @@
       ([eq? (car crnt-pg) #\+] (append pgs-lst (list (cdr crnt-pg))))
       (else 555))));nebi trebalo
   
-  (define (prog-list-dddd->vector prog-lst) ;brže ako je immutable vector ? ?
+  (define (prog-list-dddd->vector prog-lst) ;brže ako je immutable vector ? ? svejedno
   (list->vector
    (map (lambda (lst)
           (list->vector (map (lambda (lsa) (list->vector  lsa)) lst)))
@@ -76,11 +76,11 @@
 
   (define com-s-d
     (with-datum ([(a ...) (list (prog-list-dddd->vector (form-list-of-pages '() 0)))])
-      (datum (define com-lst 'a ...))))
+      (datum (define com-lst 'a ...)))) ;oblikuj prog list tako da se može staviti u module
 
   (define page-start
    (with-datum ([(a ...) (list start-y)])
-     (datum (define pg-strt a ...))))
+     (datum (define pg-strt a ...)))) ;oblikuj start tako da se može staviti u module
 
   
   (datum->syntax #f (append '(module idfk racket)
@@ -101,7 +101,7 @@
                            )))
 
 
-(provide read-syntax)
+(provide read-syntax) ; 
 
 ;memorija
 (define prog-mem-def '((define prog-mem-lst (make-vector 1 0)) 
@@ -222,7 +222,7 @@
     (display (integer->char (get-prog-mem-val-at-B))))
                  
 
-  ;Input mem
+  ;Input mem, radi i sve ok ali nešto mu se nesviđa
   (define (input-val-int-at-A)
     (set-prog-mem-A! (string->number (read-line (current-input-port) 'any))))
   (define (input-val-int-at-B)
